@@ -1,0 +1,49 @@
+#!/usr/bin/env python
+from python_class.controller import Controller
+from python_class.controller import MODE
+from python_class import utilities
+import rospy
+import tf
+import math
+from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Point
+from geometry_msgs.msg import Vector3
+
+class Potential_Field(Controller):
+	waypoints = []
+	obstacles = []
+
+	def __init__(self, name):
+		Controller.__init__(self,name, 10, MODE.HEADING)
+		waypoints = utilities.readGPSCoordinates('data/waypoints.txt')
+		obstacles = utilities.readGPSCoordinates('data/obstacles.txt')
+	def distanceVector(self, pos, dest):
+		d = GPSDist(pos.x, pos.y, dest.x, dest.y)
+		bearing = GPSBearing(pos.x, pos.y, dest.x, dest.y)
+		return Vector3(d*math.cos(bearing), d*math.sin(bearing), 0)
+	def control(self):
+		rospy.loginfo('controlling')
+		current = Vector3(self.gpsMsg.latitude, self.gpsMsg.longitude, 0)
+		cmd = Twist()
+		heading = Vector3()
+
+		for i in self.waypoints:
+			heading += self.distanceVector(current, Vector3(i.x,i.y,i.z))
+		for i in self.obstacles:
+			obs = Vector3(i.x,i.y,i.z)
+			res = self.distanceVector(current, obs)
+			dist = res.length2()
+			if(dist < 100):
+				res /= dist*dist
+				heading += res
+		cmd.linear = heading
+		return cmd
+
+if __name__ == '__main__':
+	try:
+		pot = Potential_Field('potent')
+		while not rospy.is_shutdown():
+			pot.loop()
+	except rospy.ROSInterruptException:
+
+		pass

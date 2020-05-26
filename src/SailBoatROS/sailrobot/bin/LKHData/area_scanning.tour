@@ -1,0 +1,16 @@
+NAME : area_scanning.5398.tour
+COMMENT : Length = 5398
+COMMENT : Found by LKH [Keld Helsgaun] Thu Jun  7 15:56:54 2018
+TYPE : TOUR
+DIMENSION : 8
+TOUR_SECTION
+1
+2
+3
+6
+5
+4
+7
+8
+-1
+EOF

@@ -1,0 +1,3 @@
+<launch>
+	<node pkg="sailrobot_modules" name="xbee" type="fleetSailboat.py" />
+</launch>
