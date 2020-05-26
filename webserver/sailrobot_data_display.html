@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>Sail Robot Data</title>
+   </head>
+
+   <style type="text/css">
+    .tg  {border-collapse:collapse;border-spacing:0;}
+    .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+    .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+    .tg .tg-baqh{text-align:center;vertical-align:top}
+    .tg .tg-0lax{text-align:left;vertical-align:top}
+    </style>
+    <table class="tg" id="sailboatDataTableWind">
+      <tr>
+        <th class="tg-baqh" colspan="2"><span style="font-weight:bold">Wind Direction</span></th>
+      </tr>
+      <tr>
+        <td class="tg-0lax">direction:</td>
+        <td class="tg-0lax" id="windDirection">-</td>
+      </tr>
+    </table>
+
+    <style type="text/css">
+        .tg  {border-collapse:collapse;border-spacing:0;}
+        .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+        .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+        .tg .tg-baqh{text-align:center;vertical-align:top}
+        .tg .tg-0lax{text-align:left;vertical-align:top}
+        </style>
+        <table class="tg" id="sailboatDataTableIMU">
+          <tr>
+            <th class="tg-baqh" colspan="2"><span style="font-weight:bold">IMU</span></th>
+          </tr>
+          <tr>
+            <td class="tg-0lax">roll</td>
+            <td class="tg-0lax" id="roll">-</td>
+          </tr>
+          <tr>
+            <td class="tg-0lax" >pitch</td>
+            <td class="tg-0lax" id="pitch">-</td>
+          </tr>
+          <tr>
+            <td class="tg-0lax">yaw</td>
+            <td class="tg-0lax" id="yaw">-</td>
+          </tr>
+        </table>
+
+        <style type="text/css">
+            .tg  {border-collapse:collapse;border-spacing:0;}
+            .tg td{font-family:Arial, sans-serif;font-size:14px;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+            .tg th{font-family:Arial, sans-serif;font-size:14px;font-weight:normal;padding:10px 5px;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;border-color:black;}
+            .tg .tg-baqh{text-align:center;vertical-align:top}
+            .tg .tg-0lax{text-align:left;vertical-align:top}
+            </style>
+            <table class="tg" id="sailboatDataTableGPS">
+              <tr>
+                <th class="tg-baqh" colspan="2"><span style="font-weight:bold">GPS</span></th>
+              </tr>
+              <tr>
+                <td class="tg-0lax">longitude</td>
+                <td class="tg-0lax" id="longitude">-</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">latitude</td>
+                <td class="tg-0lax" id="latitude">-</td>
+              </tr>
+            </table>
+      
+      <script src = "/socket.io/socket.io.js"></script>
+   
+      <script>
+         var socket = io();
+   
+         socket.on('connect_failed', function() {
+            // https://www.tutorialspoint.com/socket.io/socket.io_error_handling.htm
+            document.write("Sorry, there seems to be an issue with the connection!");
+         })
+   
+         socket.on('boatData',function(data) {
+            
+            var csvData = data.description;
+            var csvRows = csvData.split(';');
+            for (i = 0; i < csvRows.length; i++) { 
+                var csvColls = csvRows[i].split(',');
+                
+                switch (csvColls[0]) {
+                case 'direction':
+                document.getElementById("sailboatDataTableWind").rows[1].cells.namedItem("windDirection").innerHTML = csvColls[1] + "°";
+                break;
+                case 'roll':
+                document.getElementById("sailboatDataTableIMU").rows[1].cells.namedItem("roll").innerHTML = csvColls[1] + "°";
+                break;
+                case 'pitch':
+                document.getElementById("sailboatDataTableIMU").rows[2].cells.namedItem("pitch").innerHTML = csvColls[1] + "°";
+                break;
+                case 'yaw':
+                document.getElementById("sailboatDataTableIMU").rows[3].cells.namedItem("yaw").innerHTML = csvColls[1] + "°";
+                break;
+                case 'longitude':
+                document.getElementById("sailboatDataTableGPS").rows[1].cells.namedItem("longitude").innerHTML = csvColls[1] + "°";
+                break;
+                case 'latitude':
+                document.getElementById("sailboatDataTableGPS").rows[2].cells.namedItem("latitude").innerHTML = csvColls[1] + "°";
+                break;
+                default:
+                break;
+                }
+
+            }
+         });
+      </script>
+      
+   </body>
+</html>
